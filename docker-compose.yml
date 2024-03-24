@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  jplab:
+    build:
+      context: ./jplab
+      dockerfile: Dockerfile
+    restart: always
+    entrypoint: >
+      jupyter-lab
+      --allow-root
+      --ip=0.0.0.0
+      --port=8888
+      --no-browser
+      --NotebookApp.token=''
+      --notebook-dir=/workspace
+    expose:
+      - "8888"
+    ports:
+      - "8888:8888"
+    volumes:
+      # ./jplab/root_jupyter -> 設定を保存しコンテナ落としても設定を永続化させる
+      # ./workspace -> 作業フォルダ。ソースなど
+      - ./jplab/root_jupyter:/root/.jupyter
+      - ./jplab_workspase:/workspace
+
+    # GPUを使う場合の設定
+    # environment:
+    #   - "NVIDIA_VISIBLE_DEVICES=all"
+    #   - "NVIDIA_DRIVER_CAPABILITIES=all"
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - capabilities:
+    #           - gpu
